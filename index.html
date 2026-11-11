@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MoveMyCar UAE | Premium Luxury Vehicle Relocation & Dealership Logistics</title>
-  <meta name="description" content="UAE luxury vehicle relocation platform for Rolls-Royce, BMW, Mercedes-AMG, Porsche and dealerships. Real-time GPS tracking and 8-point digital handover reports.">
+  <title>MoveMyCar UAE | Car Relocation &amp; Dealership Logistics Across the Emirates</title>
+  <meta name="description" content="Move cars across the UAE with vetted professional drivers. Live GPS tracking, AED 1.5M transit insurance, 8-point digital handover reports, and VAT invoices for dealerships.">
+  <meta name="theme-color" content="#4F46E5">
 
   <!-- Leaflet CSS for Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -23,8 +24,8 @@
     <div class="container nav-wrap">
       <a href="#top" class="logo-brand" onclick="window.handleNavClick('booking')">
         <svg class="car-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor">
-          <path d="M6 38l7-16c1-2.5 3.5-4 6-4h26c2.5 0 5 1.5 6 4l7 16" stroke="#E5293E" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M4 38h56v8a4 4 0 01-4 4H8a4 4 0 01-4-4v-8z" fill="#E5293E"/>
+          <path d="M6 38l7-16c1-2.5 3.5-4 6-4h26c2.5 0 5 1.5 6 4l7 16" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M4 38h56v8a4 4 0 01-4 4H8a4 4 0 01-4-4v-8z" fill="currentColor"/>
           <circle cx="18" cy="46" r="5" fill="#fff" stroke="#111827" stroke-width="2"/>
           <circle cx="46" cy="46" r="5" fill="#fff" stroke="#111827" stroke-width="2"/>
         </svg>
@@ -71,27 +72,29 @@
        VIEW 1: PUBLIC CUSTOMER & B2B WEBSITE
   ======================================================== -->
   <main id="view-public" class="app-view active">
-    <!-- Hero Section with Fluid Crimson Wave & Three.js 3D Car -->
+    <!-- Hero Section -->
     <section class="hero-section" id="booking">
       <div class="hero-red-wave"></div>
       
       <div class="container hero-grid">
-        <!-- Hero Left Content (Matching Dribbble Style) -->
+        <!-- Hero Left Content -->
         <div class="hero-content">
           <div class="hero-eyebrow">
-            <span>● UAE Professional Vehicle Logistics</span>
+            <span>Vehicle Logistics Across the UAE</span>
           </div>
           <h1 class="hero-title">
-            Easy And Fast Way To <br>
-            <span class="accent">Relocate Your Car</span>
+            The Easy Way to <br>
+            <span class="accent">Move Your Car</span>
           </h1>
           <p class="hero-sub">
-            Vetted professional drivers across all UAE emirates. Full transit insurance, live GPS tracking, and digital handover reports for luxury cars and dealer stock.
+            Vetted professional drivers in every UAE.
+             Every trip includes transit insurance, live GPS tracking,
+              whether you own one car or manage a dealership fleet.
           </p>
 
           <div class="hero-cta-group">
             <button class="btn btn-primary" onclick="window.openBookingWizard()">
-              Book Now →
+              Book a Driver
             </button>
             <button class="btn btn-outline" data-view="dealer">
               Dealership Portal
@@ -99,22 +102,20 @@
           </div>
         </div>
 
-        <!-- Hero Right: Interactive Three.js 3D Luxury Car Showcase -->
-        <div class="hero-3d-stage">
-          <div id="threeCarCanvas"></div>
-          
-          <!-- 3D Car Paint Customizer -->
-          <div class="car-color-picker">
-            <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Paint:</span>
-            <span class="color-dot active" data-color="#E5293E" style="background:#E5293E;" title="Carmine Red"></span>
-            <span class="color-dot" data-color="#F8FAFC" style="background:#F8FAFC;" title="Pearl White"></span>
-            <span class="color-dot" data-color="#18181B" style="background:#18181B;" title="Stealth Onyx"></span>
-            <span class="color-dot" data-color="#EAB308" style="background:#EAB308;" title="UAE Gold"></span>
+        <!-- Hero Right: Transparent-BG 2D Luxury Car Visual -->
+        <div class="hero-visual">
+          <img src="https://pngimg.com/uploads/mercedes/mercedes_PNG80135.png" alt="White luxury sedan prepared for door-to-door relocation by MoveMyCar UAE" loading="eager">
+          <div class="hero-visual-badge">
+            <span class="badge-emoji">🛡️</span>
+            <div>
+              <strong>AED 1.5M Insured</strong>
+              <span>Every trip, door to door</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Floating Horizontal Booking Bar (Matching Dribbble reference) -->
+      <!-- Floating Horizontal Booking Bar -->
       <div class="container floating-booking-wrap" id="floatingBookingSection">
         <form class="floating-booking-bar" onsubmit="event.preventDefault();">
           <div class="bar-field">
@@ -189,8 +190,8 @@
         <div class="fleet-header">
           <div>
             <div class="section-tag">Supported Luxury Fleet</div>
-            <h2 class="section-title">Specialized Luxury Vehicle Relocation</h2>
-            <p class="section-subtitle">Trained drivers with expertise in handling high-end executive and exotic marques across the UAE.</p>
+            <h2 class="section-title">Experienced with High End Vehicles</h2>
+            <!-- <p class="section-subtitle">Our drivers are trained to handle executive and exotic marques with the care they require.</p> -->
           </div>
           <div class="fleet-filter-pills">
             <button class="fleet-filter-btn active" data-category="all">All Vehicles</button>
@@ -211,9 +212,9 @@
       <div class="container">
         <div class="routes-header">
           <div>
-            <div class="section-tag">Inter-Emirates Network</div>
-            <h2 class="section-title">Popular Relocation Routes</h2>
-            <p class="section-subtitle">Fixed transparent rates across Dubai, Abu Dhabi, and the Northern Emirates.</p>
+            <!-- <div class="section-tag">Inter-Emirates Network</div> -->
+            <h2 class="section-title">Popular Routes</h2>
+            <!-- <p class="section-subtitle">Fixed, transparent rates between Dubai, Abu Dhabi, and the Northern Emirates.</p> -->
           </div>
         </div>
 
@@ -316,10 +317,12 @@
     <section style="padding:70px 0;background:var(--bg-surface);border-top:1px solid var(--border-light);">
       <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;">
         <div>
-          <div class="section-tag">Zero Disputes</div>
-          <h2 class="section-title">8-Point Digital Condition Handover</h2>
+          <!-- <div class="section-tag">Zero Disputes</div> -->
+          <h2 class="section-title">Digital Condition Handover</h2>
           <p class="section-subtitle" style="margin-bottom:20px;">
-            Timestamped photographic evidence, odometer verification, and dual e-signatures captured on collection and delivery.
+            <!-- Timestamped photos, odometer readings, and
+            signatures from both sides are captured at collection and delivery condition. -->
+            check condition on both side then handover to client
           </p>
 
           <div style="display:flex;gap:12px;margin-top:20px;">
@@ -355,10 +358,10 @@
     <section style="padding:70px 0;background:#FFFFFF;">
       <div class="container" style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:40px;align-items:center;">
         <div>
-          <div class="section-tag">Drive With Us</div>
+          <!-- <div class="section-tag">Drive With Us</div> -->
           <h2 class="section-title">Drive Premium Cars Across UAE</h2>
           <p class="section-subtitle" style="margin-bottom:20px;">
-            Flexible schedule, weekly direct deposits, and comprehensive transit insurance.
+            <!-- Flexible schedule, weekly direct deposits, and comprehensive transit insurance. -->
           </p>
 
           <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px;max-width:480px;margin-bottom:20px;">
@@ -557,7 +560,7 @@
     <div class="container dispatch-grid">
       <div class="dispatch-panel">
         <div class="dispatch-panel-head">
-          <div class="dispatch-panel-title">⚡ Unassigned Movements Queue</div>
+          <div class="dispatch-panel-title">⚡ Unassigned Queue</div>
           <span style="font-size:12px;color:var(--text-muted);">Match nearby vetted driver</span>
         </div>
         <div id="unassignedQueueList"></div>
@@ -581,7 +584,7 @@
       <div class="section-tag">Mobile Experience</div>
       <h2 style="font-size:24px;">Vetted Driver Mobile App</h2>
       <p style="font-size:13px;color:var(--text-muted);max-width:500px;margin:4px auto 0;">
-        Experience how MoveMyCar UAE drivers receive trip alerts, complete 8-point condition checks, capture customer e-signatures, and navigate.
+        See how our drivers receive trip alerts, complete the 8-point condition check, capture the customer signature, and navigate to delivery.
       </p>
     </div>
 
@@ -740,8 +743,8 @@
       <div class="footer-col">
         <div class="logo-brand" style="margin-bottom:12px;">
           <svg class="car-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" style="width:32px;height:32px;">
-            <path d="M6 38l7-16c1-2.5 3.5-4 6-4h26c2.5 0 5 1.5 6 4l7 16" stroke="#E5293E" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M4 38h56v8a4 4 0 01-4 4H8a4 4 0 01-4-4v-8z" fill="#E5293E"/>
+            <path d="M6 38l7-16c1-2.5 3.5-4 6-4h26c2.5 0 5 1.5 6 4l7 16" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M4 38h56v8a4 4 0 01-4 4H8a4 4 0 01-4-4v-8z" fill="currentColor"/>
           </svg>
           <span>MoveMyCar<span class="domain">.ae</span></span>
         </div>
@@ -782,13 +785,10 @@
     </div>
 
     <div class="container footer-bottom">
-      <span>© 2026 MoveMyCar UAE Logistics LLC. Bespoke vehicle logistics platform for Mohamed Sharif.</span>
+      <span>© 2026 MoveMyCar UAE Logistics LLC. All rights reserved.</span>
       <span>Terms of Carriage · FTA VAT Compliance</span>
     </div>
   </footer>
-
-  <!-- Three.js CDN for Interactive 3D Car -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <!-- Leaflet Map JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -796,7 +796,7 @@
   <!-- Modular Application Scripts -->
   <script src="js/mock-data.js"></script>
   <script src="js/calculator.js"></script>
-  <script src="js/three-car.js"></script>
+
   <script src="js/map-tracker.js"></script>
   <script src="js/handover-report.js"></script>
   <script src="js/dealer-portal.js"></script>

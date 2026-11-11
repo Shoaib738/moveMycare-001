@@ -139,6 +139,36 @@
 }
 .vin-tag .remove-vin:hover { color: var(--color-primary); }
 
+/* Shared utility classes used by portal scripts */
+.btn-success {
+  background: var(--status-success);
+  color: #fff;
+}
+.btn-success:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.badge-info {
+  background: var(--status-info-soft);
+  color: var(--status-info);
+}
+
+.form-control {
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0 10px;
+  color: var(--text-main);
+  font-weight: 600;
+  cursor: pointer;
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
 /* Table Styling */
 .table-responsive {
   width: 100%;
@@ -363,7 +393,7 @@
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 16px;
-  box-shadow: 0 8px 24px rgba(229, 41, 62, 0.15);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.15);
 }
 
 .checklist-step-item {

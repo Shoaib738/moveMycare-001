@@ -1,6 +1,6 @@
 /**
  * MoveMyCar UAE - Core Application Controller
- * Manages views, Three.js 3D car customizer, luxury fleet showcase, floating booking bar, and modals
+ * Manages views, hero visual, luxury fleet showcase, floating booking bar, and modals
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,26 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   populateLocationSelects();
 
-  // 2. Initialize Three.js 3D Showroom Car
-  let threeCarInstance = null;
-  if (window.ThreeCarViewer && document.getElementById('threeCarCanvas')) {
-    threeCarInstance = new window.ThreeCarViewer('threeCarCanvas');
-    window.threeCarInstance = threeCarInstance;
-
-    // Color Customizer Dots
-    const colorDots = document.querySelectorAll('.color-dot');
-    colorDots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        colorDots.forEach(d => d.classList.remove('active'));
-        dot.classList.add('active');
-        const color = dot.dataset.color;
-        if (color && threeCarInstance) {
-          threeCarInstance.changeCarColor(color);
-          window.showToast(`3D Car paint updated: ${dot.title}`);
-        }
-      });
-    });
-  }
+  // 2. Hero 2D Visual (no 3D engine needed)
 
   // 3. Render High-Res Luxury Fleet (BMW, Rolls-Royce, AMG, Porsche)
   function renderLuxuryFleet(categoryFilter = 'all') {
@@ -260,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (viewId === 'public') {
       setTimeout(() => {
         if (window.mapTrackerInstance?.map) window.mapTrackerInstance.map.invalidateSize();
-        if (threeCarInstance) threeCarInstance.onWindowResize();
       }, 250);
     }
   };

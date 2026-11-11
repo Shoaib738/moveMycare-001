@@ -88,7 +88,7 @@ class MapTracker {
 
     // Real-time Completed Trajectory Line
     this.completedLine = L.polyline([pathPoints[0]], {
-      color: '#FF5C00',
+      color: '#4F46E5',
       weight: 5,
       opacity: 0.95
     }).addTo(this.map);
@@ -105,7 +105,7 @@ class MapTracker {
     // Destination Marker
     const endIcon = L.divIcon({
       className: 'custom-map-pin end',
-      html: `<div style="width:18px;height:18px;background:#FF5C00;border:3px solid #fff;border-radius:50%;box-shadow:0 0 12px rgba(255,92,0,0.8);"></div>`,
+      html: `<div style="width:18px;height:18px;background:#4F46E5;border:3px solid #fff;border-radius:50%;box-shadow:0 0 12px rgba(79,70,229,0.8);"></div>`,
       iconSize: [18, 18],
       iconAnchor: [9, 9]
     });
@@ -113,11 +113,11 @@ class MapTracker {
       .addTo(this.map)
       .bindTooltip(toLoc.name, { permanent: true, direction: 'top', offset: [0, -10] });
 
-    // Vehicle Marker (Pulsing orange GPS beacon)
+    // Vehicle Marker (Pulsing indigo GPS beacon)
     const carIcon = L.divIcon({
       className: 'vehicle-beacon',
       html: `
-        <div style="position:relative;width:32px;height:32px;background:#FF5C00;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(255,92,0,0.8);">
+        <div style="position:relative;width:32px;height:32px;background:#4F46E5;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(79,70,229,0.8);">
           <div style="width:10px;height:10px;background:#fff;border-radius:50%;"></div>
         </div>
       `,

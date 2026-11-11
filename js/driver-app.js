@@ -123,7 +123,7 @@ const DriverAppSimulator = {
 
         <div style="background:#141E28;border-radius:12px;padding:14px;border:1px solid var(--border-dark);margin-bottom:14px;">
           <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:36px;height:36px;border-radius:50%;background:#FF5C00;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:#4F46E5;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;">
               ↑
             </div>
             <div>
