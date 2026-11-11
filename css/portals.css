@@ -1,0 +1,540 @@
+/* ========================================================
+   PORTALS & WORKSPACES (Clean Light Luxury Theme)
+======================================================== */
+
+.app-view {
+  display: none;
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.app-view.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================================
+   1. DEALERSHIP & TRADER PORTAL (Light)
+======================================================== */
+.portal-header-bar {
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 24px 0;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.portal-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.portal-title-wrap h2 {
+  font-size: 24px;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.portal-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.portal-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.stat-card .stat-val {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-heading);
+  margin: 6px 0 2px;
+}
+
+.stat-card .stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.stat-card .stat-trend {
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stat-trend.up { color: var(--status-success); }
+
+/* Bulk Order & Fleet Move Box */
+.bulk-move-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.vin-input-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.vin-tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.vin-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #F3F4F6;
+  border: 1px solid var(--border-subtle);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.vin-tag .remove-vin {
+  cursor: pointer;
+  color: var(--text-muted);
+}
+.vin-tag .remove-vin:hover { color: var(--color-primary); }
+
+/* Table Styling */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-subtle);
+}
+
+.portal-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+[dir="rtl"] .portal-table {
+  text-align: right;
+}
+
+.portal-table th {
+  background: #F9FAFB;
+  padding: 14px 18px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.portal-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.portal-table tr:hover td {
+  background: #F9FAFB;
+}
+
+/* ========================================================
+   2. DISPATCH & OPERATIONS HUB
+======================================================== */
+.dispatch-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+}
+
+.dispatch-panel {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.dispatch-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dispatch-panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.unassigned-card {
+  background: #F9FAFB;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: var(--transition);
+}
+
+.unassigned-card:hover {
+  border-color: var(--color-primary);
+  background: #FFFFFF;
+  box-shadow: var(--shadow-subtle);
+}
+
+.unassigned-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.unassigned-ref {
+  font-weight: 800;
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+.unassigned-details {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.unassigned-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.driver-roster-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.driver-roster-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F9FAFB;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  transition: var(--transition);
+}
+
+.driver-roster-card:hover {
+  background: #FFFFFF;
+  box-shadow: var(--shadow-subtle);
+}
+
+.driver-roster-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.driver-roster-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--status-success);
+}
+
+.driver-roster-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-heading);
+}
+
+.driver-roster-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ========================================================
+   3. DRIVER MOBILE APPLICATION SIMULATOR
+======================================================== */
+.phone-sim-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 60px;
+}
+
+.phone-mockup {
+  width: 380px;
+  height: 760px;
+  background: #000;
+  border-radius: 46px;
+  box-shadow: 0 0 0 12px #1E293B, 0 30px 80px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-dynamic-island {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 26px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 50;
+}
+
+.phone-screen {
+  flex: 1;
+  background: #F8FAFC;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  padding: 48px 18px 24px;
+  overflow-y: auto;
+}
+
+.phone-top-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+}
+
+.driver-job-alert-card {
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(229, 41, 62, 0.15);
+}
+
+.checklist-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.checklist-step-item.checked {
+  border-color: var(--status-success);
+  background: var(--status-success-soft);
+}
+
+.checklist-step-item .step-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.signature-canvas-box {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 10px;
+  border: 2px dashed var(--border-subtle);
+}
+
+#driverSigPad {
+  width: 100%;
+  height: 120px;
+  display: block;
+  cursor: crosshair;
+}
+
+.sig-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+/* ========================================================
+   4. DIGITAL HANDOVER & UAE TAX INVOICE MODALS
+======================================================== */
+.tax-invoice-sheet {
+  background: #fff;
+  color: #0F172A;
+  padding: 36px;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-main);
+}
+
+.invoice-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  border-bottom: 2px solid #E2E8F0;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.tax-badge-official {
+  display: inline-block;
+  background: #EEF2F6;
+  border: 1px solid #CBD5E1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1E293B;
+  margin-top: 6px;
+}
+
+.invoice-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 13px;
+}
+
+.invoice-items-table th {
+  background: #F1F5F9;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 1px solid #CBD5E1;
+}
+
+.invoice-items-table td {
+  padding: 12px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.invoice-totals-box {
+  margin-left: auto;
+  width: 280px;
+  border-top: 2px solid #0F172A;
+  padding-top: 10px;
+}
+
+.inv-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.inv-total-row.grand {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-primary);
+  border-top: 1px dashed #CBD5E1;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+/* Handover Inspection Grid */
+.inspection-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.inspection-photo-item {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--border-subtle);
+  background: #F3F4F6;
+}
+
+.inspection-photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.inspection-photo-item:hover img {
+  transform: scale(1.08);
+}
+
+.inspection-photo-label {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.inspection-status-pill {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--status-success);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
