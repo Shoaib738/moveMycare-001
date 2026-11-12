@@ -11,8 +11,8 @@ const DispatchDashboard = {
   },
 
   renderKPIs() {
-    const unassignedCount = window.INITIAL_JOBS.filter(j => !j.driver || j.status === 'Unassigned').length;
-    const activeTrips = window.INITIAL_JOBS.filter(j => j.status === 'In Transit').length;
+    const unassignedCount = window.INITIAL_JOBS.filter(j => j.status === 'Unassigned').length;
+    const activeTrips = window.INITIAL_JOBS.filter(j => window.Operations.active.includes(j.status)).length;
     const availableDrivers = window.DRIVER_ROSTER.filter(d => d.status === 'Available').length;
 
     const unassignedEl = document.getElementById('kpiUnassigned');
@@ -29,7 +29,7 @@ const DispatchDashboard = {
     const container = document.getElementById('unassignedQueueList');
     if (!container) return;
 
-    const unassigned = window.INITIAL_JOBS.filter(j => !j.driver || j.status === 'Unassigned');
+    const unassigned = window.INITIAL_JOBS.filter(j => j.status === 'Unassigned');
 
     if (unassigned.length === 0) {
       container.innerHTML = `
@@ -49,22 +49,22 @@ const DispatchDashboard = {
       return `
         <div class="unassigned-card">
           <div class="unassigned-head">
-            <span class="unassigned-ref">${job.ref}</span>
-            <span class="badge badge-warning" style="font-size:11px;">High Priority</span>
+            <span class="unassigned-ref">${window.escapeHTML(job.ref)}</span>
+            <span class="badge badge-warning" style="font-size:11px;">${window.escapeHTML(job.priority || 'Standard dispatch')}</span>
           </div>
           <div class="unassigned-details">
-            <strong style="color:#fff;">${job.vehicle}</strong> · ${job.dealer}<br>
+            <strong style="color:#fff;">${window.escapeHTML(job.vehicle)}</strong> · ${window.escapeHTML(job.dealer)}<br>
             <span>${fromLoc} → ${toLoc} (${job.km} km)</span>
           </div>
           <div class="unassigned-actions">
-            <select class="form-control" id="selectDriverFor_${job.ref}" style="height:36px;font-size:12px;width:180px;">
+            <select class="form-control" id="selectDriverFor_${window.escapeHTML(job.ref)}" style="height:36px;font-size:12px;width:180px;">
               ${window.DRIVER_ROSTER.map(d => `
                 <option value="${d.id}" ${d.status !== 'Available' ? 'disabled' : ''}>
                   ${d.name} (${d.distKm} km away) ${d.status !== 'Available' ? '- Busy' : ''}
                 </option>
               `).join('')}
             </select>
-            <button class="btn btn-primary btn-sm" onclick="window.DispatchDashboard.allocateDriver('${job.ref}')">
+            <button class="btn btn-primary btn-sm" onclick="window.DispatchDashboard.allocateDriver('${window.escapeHTML(job.ref)}')">
               ⚡ Dispatch Driver
             </button>
           </div>
@@ -107,13 +107,10 @@ const DispatchDashboard = {
     const driver = window.DRIVER_ROSTER.find(d => d.id === driverId) || window.DRIVER_ROSTER[0];
     const job = window.INITIAL_JOBS.find(j => j.ref === jobRef);
 
-    if (job && driver) {
-      job.driver = driver.name;
-      job.status = 'In Transit';
-      job.speed = 82;
-      job.eta = '32 min';
+    if (!driver || driver.status !== 'Available') return window.showToast('Select an available driver.');
 
-      driver.status = 'On Trip';
+    if (job && driver && driver.status === 'Available') {
+      try {window.Operations.assign(job.ref, driver.id);} catch(error) {window.showToast(error.message);return;}
 
       this.renderKPIs();
       this.renderUnassignedQueue();
@@ -121,7 +118,7 @@ const DispatchDashboard = {
       window.DealerPortal.renderOrdersTable();
 
       if (window.showToast) {
-        window.showToast(`Allocated ${driver.name} to ${job.ref} (${job.vehicle})! Push alert dispatched to driver app.`);
+        window.showToast(`Allocated ${driver.name} to ${window.escapeHTML(job.ref)} (${window.escapeHTML(job.vehicle)})! Demo assignment saved.`);
       }
     }
   }

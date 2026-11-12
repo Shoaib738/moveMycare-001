@@ -1,6 +1,6 @@
 /**
  * MoveMyCar UAE - Booking & Distance Engine
- * Computes exact highway mileage across UAE, drive times, and VAT-compliant pricing
+ * Estimates distance, duration, and illustrative demo pricing.
  */
 
 const PricingEngine = {
@@ -59,18 +59,22 @@ const PricingEngine = {
       discountPct += 0.08; // Bulk volume discount
     }
 
-    let subtotal = baseRate * qty * (1 - discountPct);
-    const vat = subtotal * 0.05; // 5% UAE FTA VAT
-    const total = Math.round((subtotal + vat) / 5) * 5; // Round to nearest 5 AED
+    const subtotal = Number((baseRate * qty * (1 - discountPct)).toFixed(2));
+    const vat = Number((subtotal * 0.05).toFixed(2));
+    const total = Number((subtotal + vat).toFixed(2));
 
     return {
+      baseCharge: 120 * qty,
+      distanceCharge: Number((distanceKm * 2.10 * qty).toFixed(2)),
+      vehicleAdjustment: Number(((120 + distanceKm * 2.10) * (veh.mult - 1) * qty).toFixed(2)),
+      discountAmount: Number((baseRate * qty * discountPct).toFixed(2)),
       distanceKm,
       duration: this.estimateDuration(distanceKm),
-      subtotal: Math.round(subtotal),
-      vat: Math.round(vat),
+      subtotal,
+      vat,
       total,
       discountPct: Math.round(discountPct * 100),
-      perVehicle: Math.round(total / qty)
+      perVehicle: Number((total / qty).toFixed(2))
     };
   },
 

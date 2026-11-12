@@ -9,31 +9,35 @@ const DealerPortal = {
 
   init() {
     this.renderStats();
-    this.renderOrdersTable();
+    this.renderOrdersTable(this.activeFilter);
     this.bindEvents();
   },
 
   renderStats() {
-    const totalJobs = window.INITIAL_JOBS.length;
-    const inTransit = window.INITIAL_JOBS.filter(j => j.status === 'In Transit').length;
-    const delivered = window.INITIAL_JOBS.filter(j => j.status === 'Delivered').length;
-    const totalSpend = window.INITIAL_JOBS.reduce((acc, curr) => acc + curr.cost, 0);
+    const ownJobs = window.INITIAL_JOBS.filter(j => j.dealer === 'Al Nabooda Automobiles');
+    const totalJobs = ownJobs.length;
+    const inTransit = ownJobs.filter(j => j.status === 'In Transit').length;
+    const delivered = ownJobs.filter(j => j.status === 'Delivered').length;
+    const totalSpend = ownJobs.reduce((acc, curr) => acc + curr.cost, 0);
 
     const activeEl = document.getElementById('dealerActiveMoves');
     if (activeEl) activeEl.textContent = inTransit;
 
     const totalEl = document.getElementById('dealerTotalFleet');
-    if (totalEl) totalEl.textContent = totalJobs + 18; // plus historical
+    if (totalEl) totalEl.textContent = totalJobs;
 
     const spendEl = document.getElementById('dealerMonthlySpend');
-    if (spendEl) spendEl.textContent = 'AED ' + (totalSpend + 14200).toLocaleString();
+    if (spendEl) spendEl.textContent = 'AED ' + totalSpend.toLocaleString();
+    const stats = document.querySelector('#view-dealer .portal-stats-row');
+    if (stats) stats.querySelectorAll('.stat-val')[3].textContent = delivered;
   },
 
   renderOrdersTable(filter = 'all') {
+    this.activeFilter = filter;
     const tableBody = document.getElementById('dealerOrdersTableBody');
     if (!tableBody) return;
 
-    let jobs = window.INITIAL_JOBS;
+    let jobs = window.INITIAL_JOBS.filter(j => j.dealer === 'Al Nabooda Automobiles');
     if (filter !== 'all') {
       jobs = jobs.filter(j => j.status.toLowerCase().replace(' ', '-') === filter);
     }
@@ -49,12 +53,12 @@ const DealerPortal = {
       return `
         <tr>
           <td>
-            <strong>${job.ref}</strong><br>
-            <span style="font-size:11px;color:var(--text-light-muted);font-family:monospace;">${job.vin}</span>
+            <strong>${window.escapeHTML(job.ref)}</strong><br>
+            <span style="font-size:11px;color:var(--text-light-muted);font-family:monospace;">${window.escapeHTML(job.vin)}</span>
           </td>
           <td>
-            <strong>${job.vehicle}</strong><br>
-            <span style="font-size:11px;color:var(--text-light-muted);">${job.plate}</span>
+            <strong>${window.escapeHTML(job.vehicle)}</strong><br>
+            <span style="font-size:11px;color:var(--text-light-muted);">${window.escapeHTML(job.plate)}</span>
           </td>
           <td>
             <div>${fromLoc} → ${toLoc}</div>
@@ -64,7 +68,7 @@ const DealerPortal = {
             ${job.driver ? `
               <div style="display:flex;align-items:center;gap:6px;">
                 <span style="width:7px;height:7px;border-radius:50%;background:#10B981;"></span>
-                <span>${job.driver}</span>
+                <span>${window.escapeHTML(job.driver)}</span>
               </div>
             ` : '<span style="color:#F59E0B;font-size:12px;">Awaiting Dispatch</span>'}
           </td>
@@ -76,25 +80,28 @@ const DealerPortal = {
           </td>
           <td>
             <div style="display:flex;gap:6px;">
-              <button class="btn btn-outline btn-sm" onclick="window.trackJobRef('${job.ref}')" title="Track Live">
+              <button class="btn btn-outline btn-sm" onclick="window.trackJobRef('${window.escapeHTML(job.ref)}')" title="Track Live">
                 📡 Live
               </button>
-              <button class="btn btn-dark btn-sm" onclick="window.HandoverReportEngine.openHandoverModal('${job.ref}')" title="Handover Report">
+              <button class="btn btn-dark btn-sm" onclick="window.HandoverReportEngine.openHandoverModal('${window.escapeHTML(job.ref)}')" title="Handover Report">
                 📋 Report
               </button>
-              <button class="btn btn-dark btn-sm" onclick="window.HandoverReportEngine.openInvoiceModal('${job.ref}')" title="Tax Invoice">
+              <button class="btn btn-dark btn-sm" onclick="window.HandoverReportEngine.openInvoiceModal('${window.escapeHTML(job.ref)}')" title="Tax Invoice">
                 📄 VAT
               </button>
             </div>
           </td>
         </tr>
       `;
-    }).join('');
+    }).join('') || '<tr><td colspan="7">No movements match this filter.</td></tr>';
   },
 
   addVinTag(vin) {
     const cleanVin = vin.trim().toUpperCase();
-    if (!cleanVin) return;
+    if (!/^[A-HJ-NPR-Z0-9]{8,17}$/.test(cleanVin)) return window.showToast('Use 8–17 chassis characters (letters and digits, excluding I, O, Q).');
+    if(this.tempVins.length>=50)return window.showToast('A fleet booking supports up to 50 vehicles.');
+    if(this.tempVins.includes(cleanVin))return window.showToast('This chassis is already queued.');
+    if(window.INITIAL_JOBS.some(j=>j.vin===cleanVin&&!['Delivered','Cancelled'].includes(j.status)))return window.showToast('This chassis already has an active movement.');
     if (!this.tempVins.includes(cleanVin)) {
       this.tempVins.push(cleanVin);
       this.renderVinTags();
@@ -116,7 +123,7 @@ const DealerPortal = {
     container.innerHTML = this.tempVins.map((vin, i) => `
       <div class="vin-tag">
         <span>${vin}</span>
-        <span class="remove-vin" onclick="window.DealerPortal.removeVinTag(${i})">×</span>
+        <button type="button" class="remove-vin" aria-label="Remove ${vin}" onclick="window.DealerPortal.removeVinTag(${i})">×</button>
       </div>
     `).join('');
   },
@@ -124,27 +131,21 @@ const DealerPortal = {
   submitBulkMove() {
     const from = document.getElementById('dealerBulkFrom')?.value || 'alquoz';
     const to = document.getElementById('dealerBulkTo')?.value || 'yas';
-    const count = Math.max(1, this.tempVins.length || 1);
+    if (from === to) return window.showToast('Choose different collection and delivery locations.');
+    if (!this.tempVins.length) return window.showToast('Add at least one chassis number first.');
+    const count = this.tempVins.length;
 
-    const newJobRef = 'MMC-' + Math.floor(7000 + Math.random() * 2000);
-    const newJob = {
-      ref: newJobRef,
-      dealer: 'Al Nabooda Automobiles',
-      vehicle: `${count}x Fleet Batch Transfer`,
-      vin: this.tempVins[0] || 'WP1ZZZ9Y8MDA8129',
-      plate: 'Batch Movement',
-      from: from,
-      to: to,
-      driver: null,
-      status: 'Unassigned',
-      speed: 0,
-      time: 'Just now',
-      eta: 'Allocating Drivers',
-      cost: count * 420,
-      km: window.PricingEngine.calculateDistance(from, to)
-    };
-
-    window.INITIAL_JOBS.unshift(newJob);
+    const quote = window.PricingEngine.computeQuote({from, to, qty: count, isDealer: true});
+    const newJobRef = window.DemoStore.ref();
+    this.tempVins.forEach((vin, i) => window.INITIAL_JOBS.unshift({
+      ref: newJobRef + '-' + (i + 1), dealer: 'Al Nabooda Automobiles',
+      vehicle: 'Dealer vehicle', vin, plate: 'Awaiting registration', from, to,
+      driver: null, status: 'Unassigned', speed: 0, time: 'Just now', eta: 'Awaiting dispatch',
+      priority: document.getElementById('dealerPriority').value,
+      createdAt: new Date().toISOString(), date: window.BookingUI?.today(),
+      cost: i === count-1 ? Number((quote.total - Number((quote.total/count).toFixed(2))*(count-1)).toFixed(2)) : Number((quote.total / count).toFixed(2)), km: quote.distanceKm
+    }));
+    window.DemoStore.save();
     this.tempVins = [];
     this.renderVinTags();
     this.renderOrdersTable();
@@ -156,6 +157,8 @@ const DealerPortal = {
   },
 
   bindEvents() {
+    if (this.eventsBound) return;
+    this.eventsBound = true;
     const addVinBtn = document.getElementById('dealerAddVinBtn');
     const vinInput = document.getElementById('dealerVinInput');
 

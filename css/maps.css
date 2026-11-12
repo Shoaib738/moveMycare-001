@@ -1,0 +1,4 @@
+.google-map-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:#f8f8ff;border-top:1px solid #eeecfb}
+.google-map-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 11px;border:1px solid #dedaf9;background:#fff;border-radius:9px;color:var(--color-primary);font-size:11px;font-weight:700;text-align:center;line-height:1.4}
+.google-map-link:hover{background:#eeecff;border-color:#b9b1f1}.google-map-frame{display:block;width:100%;height:360px;border:0;background:#eef2ff}.google-map-frame[hidden]{display:none}
+@media(max-width:640px){.google-map-actions{padding:10px;gap:7px}.google-map-link{flex:1;min-height:40px;font-size:10px}.google-map-frame{height:300px}}

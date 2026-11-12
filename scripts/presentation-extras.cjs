@@ -1,0 +1,13 @@
+const {chromium}=require('@playwright/test'),fs=require('fs'),assert=require('assert');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.MMC_BROWSER_PATH}),context=await browser.newContext();await context.route(/^https?:\/\/(?!127\.0\.0\.1)/,r=>r.abort());const admin=await context.newPage(),driver=await context.newPage();const errors=[];for(const p of [admin,driver])p.on('pageerror',e=>errors.push(e.message));
+ await admin.addInitScript(()=>sessionStorage.setItem('mmc-session',JSON.stringify({role:'admin',expires:Date.now()+600000})));await driver.addInitScript(()=>sessionStorage.setItem('mmc-session',JSON.stringify({role:'driver',expires:Date.now()+600000})));
+ await admin.goto('http://127.0.0.1:4173/admin-panel/');await driver.goto('http://127.0.0.1:4173/driver-panel/');await admin.locator('.dashboard-layout').waitFor();await driver.locator('.dashboard-layout').waitFor();
+ const job=await driver.evaluate(()=>window.Operations.scoped('driver').find(j=>j.status==='Assigned').ref);
+ await driver.evaluate(ref=>{const data={checks:Array(8).fill(true),odometer:20000,fuel:'3/4',signer:'Example representative',signature:'Example signature'};window.Operations.inspect(ref,'collection',data);window.Operations.transition(ref,'In Transit');window.Operations.inspect(ref,'delivery',{...data,odometer:20100});},job);
+ await admin.waitForFunction(ref=>window.Operations.get(ref).status==='Delivered',job);assert(await admin.evaluate(ref=>window.Operations.get(ref).invoiceIssued,job));
+ const downloadPromise=driver.waitForEvent('download');await driver.locator('#dashboardPrimary').click();const download=await downloadPromise,text=fs.readFileSync(await download.path(),'utf8');assert(download.suggestedFilename().includes('driver-history'));assert(text.split('\r\n').slice(1).every(row=>row.includes('"Delivered"')));
+ await admin.locator('[data-tab=reports]').click();await admin.locator('#dashboardRange-trigger').click();await admin.locator('.select-search').fill('Last 7 days');await admin.locator('.select-option').filter({hasText:'Last 7 days'}).click();assert((await admin.locator('#dashboardRange-trigger').textContent()).includes('Last 7 days'));
+ await admin.locator('[data-tab=bookings]').click();await admin.locator('#adminSearch').fill('no-such-booking');assert((await admin.locator('#adminResults').textContent()).includes('No records'));
+ assert.deepStrictEqual(errors,[]);console.log('PASS: cross-tab record synchronization, signed delivery/invoice consistency, delivered-only driver export, reporting period and empty search.');await browser.close();
+})().catch(e=>{console.error(e);process.exit(1);});

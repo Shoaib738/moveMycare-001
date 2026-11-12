@@ -1,185 +1,52 @@
-/**
- * MoveMyCar UAE - Live GPS Map & Telemetry Engine
- * Smooth real-time telemetry animation, live road tracking, and ETA calculation
- */
-
+/* OpenStreetMap provides the basemap. Trip positions are simulated. */
 class MapTracker {
-  constructor(containerId = 'leafletLiveMap') {
-    this.containerId = containerId;
-    this.map = null;
-    this.routeLine = null;
-    this.completedLine = null;
-    this.vehicleMarker = null;
-    this.startMarker = null;
-    this.endMarker = null;
-    this.animationTimer = null;
-    this.currentIndex = 0;
-    this.isInitialized = false;
-  }
-
+  constructor(containerId = 'leafletLiveMap') { this.containerId = containerId; this.layers = []; }
   init() {
-    if (this.isInitialized || !window.L) return;
+    if (this.map) return;
     const container = document.getElementById(this.containerId);
-    if (!container) return;
-
-    // Center on Dubai / Abu Dhabi highway corridor
-    this.map = L.map(this.containerId, {
-      zoomControl: false,
-      scrollWheelZoom: false,
-      attributionControl: false
-    }).setView([25.0805, 55.1403], 11);
-
-    // Modern Dark Luxury Carto Tiles
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19
-    }).addTo(this.map);
-
-    L.control.zoom({ position: 'topright' }).addTo(this.map);
-    this.isInitialized = true;
-
-    // Load default demo booking
+    this.status = document.createElement('p'); this.status.className = 'map-status'; this.status.setAttribute('role', 'status'); container.after(this.status);
+    if (!window.L) {
+      container.innerHTML = '<div class="map-fallback"><strong>Map could not load</strong><p>Check your connection to load the interactive map.</p><a class="btn btn-outline" href="https://www.openstreetmap.org/#map=8/24.8/55.2" target="_blank" rel="noopener">Open UAE map</a></div>';
+      this.status.textContent = 'Map library unavailable. Trip details remain available.'; this.trackBooking('MMC-7821'); return;
+    }
+    this.map = L.map(container, { scrollWheelZoom: false }).setView([24.9, 55.1], 9);
+    this.tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(this.map);
+    this.tiles.on('tileerror', () => {this.status.textContent = 'Map tiles unavailable. Check your connection. The line shows an estimated route.';});
+    this.tiles.on('load', () => {this.status.textContent = container.querySelector('.leaflet-tile-loaded') ? 'OpenStreetMap · Estimated route · Position estimates · Live GPS connection pending' : 'Map tiles unavailable. Check your connection. The line shows an estimated route.';});
+    this.status.textContent = 'Loading map · Position estimates';
+    new ResizeObserver(() => this.map.invalidateSize({pan:false})).observe(container);
     this.trackBooking('MMC-7821');
   }
-
-  // Generates curved highway route points between two coords
-  generateHighwayPath(startCoords, endCoords, segments = 30) {
-    const pts = [];
-    const midPoint = [
-      (startCoords[0] + endCoords[0]) / 2 + (endCoords[1] - startCoords[1]) * 0.05,
-      (startCoords[1] + endCoords[1]) / 2 - (endCoords[0] - startCoords[0]) * 0.05
-    ];
-
-    for (let i = 0; i <= segments; i++) {
-      const t = i / segments;
-      const lat = (1 - t) * (1 - t) * startCoords[0] + 2 * (1 - t) * t * midPoint[0] + t * t * endCoords[0];
-      const lng = (1 - t) * (1 - t) * startCoords[1] + 2 * (1 - t) * t * midPoint[1] + t * t * endCoords[1];
-      pts.push([lat, lng]);
-    }
-    return pts;
-  }
-
-  trackBooking(bookingRef) {
-    if (!this.map) this.init();
-    if (!this.map) return;
-
-    clearInterval(this.animationTimer);
-
-    // Find job from mock data or default
-    const job = window.INITIAL_JOBS.find(j => j.ref === bookingRef) || window.INITIAL_JOBS[0];
-    const fromLoc = window.UAE_LOCATIONS[job.from] || window.UAE_LOCATIONS.alquoz;
-    const toLoc = window.UAE_LOCATIONS[job.to] || window.UAE_LOCATIONS.yas;
-
-    const pathPoints = this.generateHighwayPath(fromLoc.coords, toLoc.coords, 40);
-
-    // Cleanup previous layers
-    if (this.routeLine) this.map.removeLayer(this.routeLine);
-    if (this.completedLine) this.map.removeLayer(this.completedLine);
-    if (this.vehicleMarker) this.map.removeLayer(this.vehicleMarker);
-    if (this.startMarker) this.map.removeLayer(this.startMarker);
-    if (this.endMarker) this.map.removeLayer(this.endMarker);
-
-    // Planned Route Background Line
-    this.routeLine = L.polyline(pathPoints, {
-      color: '#1E293B',
-      weight: 6,
-      opacity: 0.9,
-      dashArray: '4, 8'
-    }).addTo(this.map);
-
-    // Real-time Completed Trajectory Line
-    this.completedLine = L.polyline([pathPoints[0]], {
-      color: '#4F46E5',
-      weight: 5,
-      opacity: 0.95
-    }).addTo(this.map);
-
-    // Origin Marker
-    const startIcon = L.divIcon({
-      className: 'custom-map-pin start',
-      html: `<div style="width:16px;height:16px;background:#10B981;border:3px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(16,185,129,0.8);"></div>`,
-      iconSize: [16, 16],
-      iconAnchor: [8, 8]
-    });
-    this.startMarker = L.marker(pathPoints[0], { icon: startIcon }).addTo(this.map).bindTooltip(fromLoc.name);
-
-    // Destination Marker
-    const endIcon = L.divIcon({
-      className: 'custom-map-pin end',
-      html: `<div style="width:18px;height:18px;background:#4F46E5;border:3px solid #fff;border-radius:50%;box-shadow:0 0 12px rgba(79,70,229,0.8);"></div>`,
-      iconSize: [18, 18],
-      iconAnchor: [9, 9]
-    });
-    this.endMarker = L.marker(pathPoints[pathPoints.length - 1], { icon: endIcon })
-      .addTo(this.map)
-      .bindTooltip(toLoc.name, { permanent: true, direction: 'top', offset: [0, -10] });
-
-    // Vehicle Marker (Pulsing indigo GPS beacon)
-    const carIcon = L.divIcon({
-      className: 'vehicle-beacon',
-      html: `
-        <div style="position:relative;width:32px;height:32px;background:#4F46E5;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(79,70,229,0.8);">
-          <div style="width:10px;height:10px;background:#fff;border-radius:50%;"></div>
-        </div>
-      `,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
-    });
-    this.vehicleMarker = L.marker(pathPoints[0], { icon: carIcon, zIndexOffset: 1000 }).addTo(this.map);
-
-    this.map.fitBounds(this.routeLine.getBounds(), { padding: [50, 50] });
-
-    // Update Telemetry Panel UI
-    this.updateTelemetryCard(job, fromLoc, toLoc);
-
-    // Start Live Driver Progress Simulation
-    this.currentIndex = 0;
-    this.animationTimer = setInterval(() => {
-      this.currentIndex++;
-      if (this.currentIndex < pathPoints.length) {
-        const currentCoord = pathPoints[this.currentIndex];
-        this.vehicleMarker.setLatLng(currentCoord);
-        this.completedLine.addLatLng(currentCoord);
-
-        // Fluctuate speed naturally between 78 and 92 km/h
-        const currentSpeed = Math.floor(78 + Math.random() * 14);
-        const speedEl = document.getElementById('liveSpeedDisplay');
-        if (speedEl) speedEl.textContent = `${currentSpeed} km/h`;
-
-        const progressPct = this.currentIndex / pathPoints.length;
-        const remainKm = Math.max(1, Math.round(job.km * (1 - progressPct)));
-        const remainMins = Math.max(1, Math.round(remainKm / 1.2));
-
-        const etaEl = document.getElementById('liveEtaDisplay');
-        if (etaEl) etaEl.textContent = `${remainMins} min (${remainKm} km)`;
-      } else {
-        clearInterval(this.animationTimer);
-        const speedEl = document.getElementById('liveSpeedDisplay');
-        if (speedEl) speedEl.textContent = '0 km/h (Arrived)';
-        const etaEl = document.getElementById('liveEtaDisplay');
-        if (etaEl) etaEl.textContent = 'Delivered';
-        if (window.showToast) {
-          window.showToast(`Vehicle ${job.ref} arrived at ${toLoc.name}. Handover report ready.`);
-        }
-      }
-    }, 450);
-  }
-
-  updateTelemetryCard(job, fromLoc, toLoc) {
-    const refEl = document.getElementById('liveJobRef');
-    if (refEl) refEl.textContent = job.ref;
-
-    const carEl = document.getElementById('liveCarName');
-    if (carEl) carEl.textContent = job.vehicle;
-
-    const routeEl = document.getElementById('liveRouteDisplay');
-    if (routeEl) routeEl.textContent = `${fromLoc.name} → ${toLoc.name}`;
-
-    const driverEl = document.getElementById('liveDriverName');
-    if (driverEl) driverEl.textContent = job.driver || 'Omar Saeed (Vetted)';
-
-    const etaEl = document.getElementById('liveEtaDisplay');
-    if (etaEl) etaEl.textContent = job.eta || '35 min';
+  trackBooking(ref) {
+    const job = window.INITIAL_JOBS.find(j=>j.ref === ref);
+    if(!job){window.showToast?.('No booking found. Try MMC-7821 or a reference from your dashboard.');return;}
+    clearInterval(this.timer);
+    const from=window.UAE_LOCATIONS[job.from], to=window.UAE_LOCATIONS[job.to];
+    this.googleLinks?.remove();
+    const initialPosition=job.status==='Delivered'?to.coords:job.status==='In Transit'?from.coords.map((n,axis)=>n+(to.coords[axis]-n)*0.3):from.coords;
+    this.googleLinks=window.GoogleMapsLinks?.attach(document.getElementById(this.containerId),job,{position:initialPosition,allowEmbed:true});
+    const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+    document.getElementById('inputTrackRef').value=ref;
+    set('liveCarName',job.vehicle);set('liveRouteDisplay',`${from.name} → ${to.name}`);
+    set('liveSpeedDisplay',job.status==='In Transit'?`${job.speed || 82} km/h`:'0 km/h');
+    set('liveEtaDisplay',job.status==='Delivered'?'Delivered · Trip':job.driver?`${job.eta} · Simulated`:'Awaiting driver assignment');
+    const active=job.status==='Delivered'?5:job.status==='In Transit'?3:job.status==='Picked Up'?2:job.status==='Assigned'?1:0;
+    document.querySelectorAll('.tracking-timeline .timeline-step').forEach((step,i)=>{step.classList.toggle('completed',i<active);step.classList.toggle('active',i===active);});
+    const descriptions=document.querySelectorAll('.timeline-content p');descriptions[1].textContent=job.driver || 'Awaiting assignment';descriptions[2].textContent=job.collectionInspection?'Collection inspection recorded':'Collection inspection pending';if(job.status==='Cancelled')set('liveEtaDisplay','Booking cancelled');
+    if(!this.map)return;
+    this.layers.forEach(layer=>this.map.removeLayer(layer));this.layers=[];
+    const points=Array.from({length:81},(_,i)=>from.coords.map((n,axis)=>n+(to.coords[axis]-n)*i/80));
+    const line=L.polyline(points,{color:'#4f46e5',weight:4,dashArray:'8 8'}).addTo(this.map);this.layers.push(line);
+    for(const [coords,label,color] of [[from.coords,from.name,'#059669'],[to.coords,to.name,'#4f46e5']])this.layers.push(L.circleMarker(coords,{radius:8,color:'#fff',fillColor:color,fillOpacity:1,weight:3}).addTo(this.map).bindTooltip(label));
+    let index=job.status==='Delivered'?80:job.status==='In Transit'?24:0;
+    const marker=L.circleMarker(points[index],{radius:11,color:'#fff',fillColor:'#4f46e5',fillOpacity:1,weight:3}).addTo(this.map).bindTooltip('Vehicle');this.layers.push(marker);
+    this.map.invalidateSize();this.map.fitBounds(line.getBounds(),{padding:[30,30],maxZoom:12});
+    if(job.status==='In Transit' && !matchMedia('(prefers-reduced-motion: reduce)').matches)this.timer=setInterval(()=>{
+      if(document.hidden || !document.getElementById('view-public').classList.contains('active'))return;
+      index=Math.min(80,index+1);marker.setLatLng(points[index]);this.googleLinks?.update(points[index]);
+      set('liveEtaDisplay',index===80?'Vehicle arrived':`${Math.max(1,Math.round((80-index)/80*job.km/1.2))} min · Simulated`);
+      if(index===80){clearInterval(this.timer);set('liveSpeedDisplay','0 km/h');}
+    },3000);
   }
 }
-
-window.MapTracker = MapTracker;
+window.MapTracker=MapTracker;
