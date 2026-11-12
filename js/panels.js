@@ -190,7 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function render(){
     if(!signedIn(role))return login(role);window.SearchSelects?.close();maps.forEach(map=>map.remove());maps=[];
     if(composer.isConnected)legacy.dealer.append(composer);
-    const view=document.getElementById('view-'+viewId(role));view.querySelector('.dashboard-layout')?.remove();
+    const view=document.getElementById('view-'+viewId(role));
+    // Only one dashboard may own shared control IDs during in-page role navigation.
+    document.querySelectorAll('.dashboard-layout').forEach(layout=>layout.remove());
     view.tabIndex=-1;document.querySelector('.skip-link')?.setAttribute('href','#'+view.id);
     const tabs=role==='admin'?['overview','bookings','dispatch','drivers','dealers','customers','billing','reports']:role==='dealer'?['overview','movements','handovers','billing','reports','account']:role==='driver'?['overview','inspections','history','earnings']:['overview','payments','history'];
     const layout=document.createElement('div');layout.className='dashboard-layout';
