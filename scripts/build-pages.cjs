@@ -3,7 +3,7 @@ const source=fs.readFileSync('index.html','utf8').replace(/((?:src|href)="((?:js
 fs.writeFileSync('index.html',source);
 for(const [path,title] of [['dealer-panel','Dealer Panel'],['admin-panel','Admin Panel'],['driver-panel','Driver Panel'],['customer-panel','Customer Panel']]){
  fs.mkdirSync(path,{recursive:true});
- fs.writeFileSync(path+'/index.html',source.replace('<head>','<head>\n  <base href="../">\n  <meta name="robots" content="noindex,nofollow">').replace(/<title>.*?<\/title>/,`<title>${title} | MoveMyCar.ae</title>`));
+ fs.writeFileSync(path+'/index.html',source.replace('<base href="./">','<base href="../">').replace('<head>','<head>\n  <meta name="robots" content="noindex,nofollow">').replace(/<title>.*?<\/title>/,`<title>${title} | MoveMyCar.ae</title>`));
 }
 console.log('Static panel routes generated.');
 fs.mkdirSync('dist',{recursive:true});

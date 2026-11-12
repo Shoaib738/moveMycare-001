@@ -11,6 +11,7 @@ The frontend keeps the supplied logo and indigo design. It now has connected adm
 - Preserved responsive searchable selects and compact calendars. Fixed muted-text and green-status contrast, range-label accessibility, focus/skip navigation, and cancelled-value/report calculations.
 - Kept Google Maps links and the optional keyed Embed API setup. GPS progress and map route lines remain simulated/estimated.
 - Made font loading non-blocking, retained local imagery/Leaflet and lazy fleet images, and generated hashed CSS/JS URLs. The static production build is `dist/`, with four refreshable role routes.
+- Fixed navigation-only image failures by freezing the document asset base before history changes. Generated role pages retain one correct base element. Stale dashboards are removed when changing roles, preventing duplicate shared control IDs.
 
 ## Verification
 
@@ -19,6 +20,8 @@ The frontend keeps the supplied logo and indigo design. It now has connected adm
 The main Playwright/axe run found no JavaScript errors, missing local assets, or automated WCAG A/AA violations in the tested public and role-based states. Supporting checks exercise native form validation, searchable dropdowns, compact calendars, official Google Maps URL construction, and the optional Embed API toggle. This is automated coverage, not an accessibility certification or a physical-device/Safari/Firefox audit.
 
 QA artifacts are written to `artifacts/presentation-audit.json`, `artifacts/accessibility-audit.json`, and role screenshots. Test-created bookings are confined to the automated browser context and do not change the seeded source data.
+
+`scripts/image-navigation-check.cjs` also verifies cold navigation without a refresh, every role's login/sidebar logo, sign-out, public fleet and inspection photos, invoice/handover images, direct-route refresh, and unique runtime IDs. It passes for both source and packaged `dist/`, with no local asset errors.
 
 ## Presentation walkthrough
 
