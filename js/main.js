@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Populate Dropdown Selects with UAE Locations
   function populateLocationSelects() {
     const selects = ['barFrom', 'barTo', 'modalFrom', 'modalTo', 'dealerBulkFrom', 'dealerBulkTo'];
-    const groups = {
-      'Dubai': ['marina', 'downtown', 'alquoz', 'businessbay', 'dip', 'dxb', 'jafza'],
-      'Abu Dhabi': ['auh', 'reem', 'yas', 'mussafah', 'ain'],
-      'Northern Emirates': ['shj', 'ajm', 'rak', 'fuj', 'uaq']
-    };
+    const groups = {};
+    Object.values(window.UAE_LOCATIONS).forEach(loc => {
+      const name = ({RAK:'Ras Al Khaimah',UAQ:'Umm Al Quwain'})[loc.emirate] || loc.emirate;
+      (groups[name] ||= []).push(loc.id);
+    });
 
     let optionsHtml = '';
     for (const [groupName, keys] of Object.entries(groups)) {
@@ -73,13 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
           <div>
             <h4 class="fleet-car-name">${car.name}</h4>
             <div class="fleet-specs-row">
-              <span>⚡ ${car.engine}</span>
-              <span>💺 ${car.seats}</span>
+              <span>Photo handover</span>
+              <span>Collection &amp; delivery</span>
             </div>
           </div>
           <div class="fleet-footer">
             <div>
-              <span style="font-size:11px;color:var(--text-muted);display:block;text-transform:uppercase;">Inter-Emirates Rate</span>
+              <span style="font-size:11px;color:var(--text-muted);display:block;text-transform:uppercase;">Indicative starting price</span>
               <span class="fleet-price">AED ${car.basePrice}</span>
             </div>
             <button class="btn btn-primary btn-sm" onclick="window.selectFleetCar('${car.id}')">
@@ -128,6 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const to = barTo ? barTo.value : 'yas';
       const veh = barVeh ? barVeh.value : 'suv';
 
+      if (from === to) return window.showToast('Choose different collection and delivery locations.');
+      const date = document.getElementById('barDate');
+      if (!date.reportValidity()) return;
       const quote = window.PricingEngine.computeQuote({
         from,
         to,
@@ -160,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     grid.innerHTML = routesData.map(r => {
       const fromLoc = window.UAE_LOCATIONS[r.from]?.name || r.from;
       const toLoc = window.UAE_LOCATIONS[r.to]?.name || r.to;
+      const estimate = window.PricingEngine.computeQuote({from:r.from,to:r.to,vehicleType:'suv'});
 
       return `
         <div class="route-card">
@@ -172,11 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>${toLoc}</span>
           </div>
           <div class="route-meta">
-            <span>📏 ${r.km} km</span>
-            <span>⚡ Same-day Delivery</span>
+            <span>📏 ${estimate.distanceKm} km</span>
+            <span>⚡ Estimated route</span>
           </div>
           <div class="route-footer">
-            <span class="route-price-tag">${r.price}</span>
+            <span class="route-price-tag">AED ${estimate.total.toFixed(2)}</span>
             <button class="btn btn-outline btn-sm" onclick="window.loadRouteIntoFloatingBar('${r.from}', '${r.to}')">
               Select
             </button>
@@ -237,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (viewId === 'dealer') window.DealerPortal.init();
     if (viewId === 'dispatch') window.DispatchDashboard.init();
-    if (viewId === 'driver') window.DriverAppSimulator.init();
+
     if (viewId === 'public') {
       setTimeout(() => {
         if (window.mapTrackerInstance?.map) window.mapTrackerInstance.map.invalidateSize();
@@ -279,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 7. Initialize Live GPS Map Tracker
   const mapTracker = new window.MapTracker('leafletLiveMap');
   window.mapTrackerInstance = mapTracker;
+  mapTracker.init();
 
   window.trackJobRef = function(ref) {
     window.switchView('public');
@@ -305,6 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.openBookingWizard = function() {
     currentStep = 1;
+    document.getElementById('modalFrom').value = barFrom.value;
+    document.getElementById('modalTo').value = barTo.value;
     showStep(1);
     if (bookingModal) bookingModal.classList.add('active');
   };
@@ -339,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('wizardNextBtn');
     const backBtn = document.getElementById('wizardBackBtn');
 
-    if (backBtn) backBtn.style.visibility = stepNum === 1 ? 'hidden' : 'visible';
+    if (backBtn) backBtn.style.visibility = stepNum !== 2 ? 'hidden' : 'visible';
     if (nextBtn) {
       if (stepNum === 2) nextBtn.textContent = 'Confirm & Generate Job Ref';
       else if (stepNum === 3) nextBtn.textContent = 'Track Live GPS →';
@@ -353,32 +360,47 @@ document.addEventListener('DOMContentLoaded', () => {
   if (nextBtn) {
     nextBtn.addEventListener('click', () => {
       if (currentStep === 1) {
+        if (document.getElementById('modalFrom').value === document.getElementById('modalTo').value) return window.showToast('Choose different collection and delivery locations.');
+        const fields = document.querySelectorAll('#wizardStep1 input');
+        for (const input of fields) { input.required = true; if (!input.reportValidity()) return; }
         currentStep = 2;
         showStep(2);
       } else if (currentStep === 2) {
-        const ref = 'MMC-' + Math.floor(8000 + Math.random() * 1900);
+        if (!document.getElementById('modalDate').reportValidity()) return;
+        for (const input of document.querySelectorAll('#wizardStep2 input')) { input.required = true; if (!input.reportValidity()) return; }
+        const ref = window.DemoStore.ref();
         const car = document.getElementById('wizCarModel')?.value || 'Rolls-Royce Ghost Extended';
         const from = document.getElementById('modalFrom')?.value || 'alquoz';
         const to = document.getElementById('modalTo')?.value || 'yas';
 
         const newJob = {
           ref: ref,
-          dealer: 'Private Client',
-          vehicle: car,
-          vin: 'SCA664S50MU8912',
-          plate: 'Dubai V 4921',
+          dealer: window.PanelApp?.isDealer() ? 'Al Nabooda Automobiles' : window.CUSTOMERS[0].name,
+          dealerId: window.PanelApp?.isDealer() ? 'DLR-101' : null,
+          customerId: window.PanelApp?.isDealer() ? null : 'CUS-101',
+          paymentStatus: 'Unpaid',
+          vehicleType: document.getElementById('modalVehicle').value,
+          createdAt: new Date().toISOString(),
+          vehicle: car.trim(),
+          vin: document.querySelector('#wizardStep2 input[placeholder*="Dubai"]').value.trim(),
+          plate: document.querySelector('#wizardStep2 input[placeholder*="Dubai"]').value.trim(),
           from: from,
           to: to,
-          driver: 'Omar Saeed',
-          status: 'In Transit',
-          speed: 84,
+          driver: null,
+          status: 'Unassigned',
+          speed: 0,
           time: 'Just now',
-          eta: '35 min',
-          cost: 580,
+          eta: 'Awaiting dispatch',
+          date: document.getElementById('modalDate').value,
+          collectionAddress: document.querySelectorAll('#wizardStep1 input')[0].value.trim(),
+          deliveryAddress: document.querySelectorAll('#wizardStep1 input')[1].value.trim(),
+          contact: document.querySelector('#wizardStep2 input[type=tel]').value.trim(),
+          cost: window.PricingEngine.computeQuote({ from, to, vehicleType: document.getElementById('modalVehicle').value, isDealer: !!window.PanelApp?.isDealer() }).total,
+          quote: window.PricingEngine.computeQuote({ from, to, vehicleType: document.getElementById('modalVehicle').value, isDealer: !!window.PanelApp?.isDealer() }),
           km: window.PricingEngine.calculateDistance(from, to)
         };
 
-        window.INITIAL_JOBS.unshift(newJob);
+        window.Operations.add(newJob);
 
         const refDisplay = document.getElementById('wizGeneratedRef');
         if (refDisplay) refDisplay.textContent = ref;
@@ -396,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (backBtn) {
     backBtn.addEventListener('click', () => {
-      if (currentStep > 1) {
+      if (currentStep === 2) {
         currentStep--;
         showStep(currentStep);
       }
@@ -414,7 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
     driverForm.addEventListener('submit', (e) => {
       e.preventDefault();
       window.closeAllModals();
-      window.showToast('Driver application submitted! MoveMyCar operations will contact you within 2 hours.');
+      window.DemoStore.write('mmc-driver-applications', [...window.DemoStore.read('mmc-driver-applications', []), {name:driverForm.querySelector('input[type=text]').value.trim(), mobile:driverForm.querySelector('input[type=tel]').value.trim(), area:driverForm.querySelector('select').value, submittedAt:new Date().toISOString()}]);
+      window.showToast('Application details saved on this device. Online submission is not connected.');
     });
   }
 
@@ -430,20 +453,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 11. Arabic / English RTL Toggle
-  let isRTL = false;
-  const langToggleBtn = document.getElementById('langToggleBtn');
-  if (langToggleBtn) {
-    langToggleBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      isRTL = !isRTL;
-      document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
-      document.documentElement.setAttribute('lang', isRTL ? 'ar' : 'en');
-      langToggleBtn.textContent = isRTL ? 'English' : 'العربية';
-      window.showToast(isRTL ? 'تم تفعيل واجهة اللغة العربية' : 'Switched to English interface');
-    });
-  }
-
   // 12. Mobile & Tablet Navigation Drawer
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
   const mobileNavDrawer = document.getElementById('mobileNavDrawer');
@@ -451,11 +460,13 @@ document.addEventListener('DOMContentLoaded', () => {
     mobileMenuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       mobileNavDrawer.classList.toggle('open');
+      mobileMenuBtn.setAttribute('aria-expanded', String(mobileNavDrawer.classList.contains('open')));
     });
   }
 
   window.closeMobileDrawer = function() {
     if (mobileNavDrawer) mobileNavDrawer.classList.remove('open');
+    mobileMenuBtn?.setAttribute('aria-expanded', 'false');
   };
 
   document.addEventListener('click', (e) => {
@@ -469,5 +480,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Sub-Engines
   window.DealerPortal.init();
   window.DispatchDashboard.init();
-  window.DriverAppSimulator.init();
+
 });

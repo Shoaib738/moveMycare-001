@@ -4,33 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MoveMyCar UAE | Car Relocation &amp; Dealership Logistics Across the Emirates</title>
-  <meta name="description" content="Move cars across the UAE with vetted professional drivers. Live GPS tracking, AED 1.5M transit insurance, 8-point digital handover reports, and VAT invoices for dealerships.">
+  <meta name="description" content="Plan vehicle relocation across the UAE. Explore transparent quotes, fleet movements, tracking previews, condition reports, and account dashboards.">
+  <link rel="icon" type="image/png" href="assets/movemycar-logo.png">
+  <meta property="og:title" content="MoveMyCar UAE | Vehicle Logistics">
+  <meta property="og:description" content="Plan vehicle moves across the UAE with transparent quotes, condition reports, and fleet workspaces.">
+  <meta property="og:type" content="website">
   <meta name="theme-color" content="#4F46E5">
 
   <!-- Leaflet CSS for Map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="assets/leaflet/leaflet.css" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=Tajawal:wght@500;700&display=swap" media="print" onload="this.media='all'">
   <!-- Modular Stylesheets -->
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/portals.css">
+  <link rel="stylesheet" href="css/variables.css?v=3c8a91baf113">
+  <link rel="stylesheet" href="css/style.css?v=75b5f6a55764">
+  <link rel="stylesheet" href="css/portals.css?v=989954c31679">
+  <link rel="stylesheet" href="css/responsive.css?v=7bbf3153dc6b">
+  <link rel="stylesheet" href="css/combobox.css?v=9874535b0235">
+  <link rel="stylesheet" href="css/dashboard.css?v=0bb375fe4cee">
+  <link rel="stylesheet" href="css/calendar.css?v=5e374f68f0d1">
+  <link rel="stylesheet" href="css/maps.css?v=36ba4c1c0107">
+  <link rel="stylesheet" href="css/audit.css?v=62a593f428f4">
 </head>
 <body>
+  <a class="skip-link" href="#view-public">Skip to main content</a>
 
   <!-- ========================================================
        CLEAN LIGHT LUXURY NAVBAR (Overlap-Free & Precise Active State)
   ======================================================== -->
   <header class="site-header">
     <div class="container nav-wrap">
-      <a href="#top" class="logo-brand" onclick="window.handleNavClick('booking')">
-        <svg class="car-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor">
-          <path d="M6 38l7-16c1-2.5 3.5-4 6-4h26c2.5 0 5 1.5 6 4l7 16" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M4 38h56v8a4 4 0 01-4 4H8a4 4 0 01-4-4v-8z" fill="currentColor"/>
-          <circle cx="18" cy="46" r="5" fill="#fff" stroke="#111827" stroke-width="2"/>
-          <circle cx="46" cy="46" r="5" fill="#fff" stroke="#111827" stroke-width="2"/>
-        </svg>
-        <span>MoveMyCar<span class="domain">.ae</span></span>
-      </a>
+      <a href="#top" class="logo-brand" onclick="window.handleNavClick('booking')"><img class="brand-logo" src="assets/movemycar-logo.png" alt="MoveMyCar Vehicle Logistics UAE"></a>
 
       <nav class="nav-links">
         <a href="#booking" data-nav="booking" class="active" onclick="window.handleNavClick('booking'); return false;">Booking</a>
@@ -38,13 +44,13 @@
         <a href="#routes" data-nav="routes" onclick="window.handleNavClick('routes'); return false;">Routes</a>
         <a href="#tracking" data-nav="tracking" onclick="window.handleNavClick('tracking'); return false;">Live Tracking</a>
         <a href="#dealer" data-nav="dealer" onclick="window.handleNavClick('dealer'); return false;">Dealer Portal</a>
-        <a href="#driver" data-nav="driver" onclick="window.handleNavClick('driver'); return false;">Driver App</a>
+        <a href="#driver" data-nav="driver" onclick="window.handleNavClick('driver'); return false;">Driver Panel</a>
+        <a href="customer-panel/" data-panel-link="customer">My Bookings</a>
       </nav>
 
       <div class="nav-actions">
-        <button class="btn btn-outline btn-sm" id="langToggleBtn" style="padding:6px 14px;">العربية</button>
         <button class="btn btn-primary btn-sm" onclick="window.openBookingWizard()">+ Book a Driver</button>
-        <button class="hamburger-btn" id="mobileMenuBtn" aria-label="Toggle Navigation">
+        <button class="hamburger-btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileNavDrawer" aria-label="Toggle Navigation">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -63,6 +69,8 @@
     <a href="#tracking" data-nav="tracking" onclick="window.handleNavClick('tracking'); return false;">Live GPS Tracking</a>
     <a href="#dealer" data-nav="dealer" onclick="window.handleNavClick('dealer'); return false;">Dealership Portal</a>
     <a href="#driver" data-nav="driver" onclick="window.handleNavClick('driver'); return false;">Driver App</a>
+    <a href="admin-panel/" data-panel-link="admin">Admin Panel</a>
+    <a href="customer-panel/" data-panel-link="customer">Customer Panel</a>
     <div class="drawer-actions">
       <button class="btn btn-primary" onclick="window.closeMobileDrawer(); window.openBookingWizard();">+ Book a Driver Now</button>
     </div>
@@ -71,7 +79,7 @@
   <!-- ========================================================
        VIEW 1: PUBLIC CUSTOMER & B2B WEBSITE
   ======================================================== -->
-  <main id="view-public" class="app-view active">
+  <main id="view-public" class="app-view active" tabindex="-1">
     <!-- Hero Section -->
     <section class="hero-section" id="booking">
       <div class="hero-red-wave"></div>
@@ -87,9 +95,7 @@
             <span class="accent">Move Your Car</span>
           </h1>
           <p class="hero-sub">
-            Vetted professional drivers in every UAE.
-             Every trip includes transit insurance, live GPS tracking,
-              whether you own one car or manage a dealership fleet.
+            Plan a car move between showrooms, service centres, or your doorstep. Explore quotes, follow your movement, and manage fleet deliveries in one place.
           </p>
 
           <div class="hero-cta-group">
@@ -104,12 +110,12 @@
 
         <!-- Hero Right: Transparent-BG 2D Luxury Car Visual -->
         <div class="hero-visual">
-          <img src="https://pngimg.com/uploads/mercedes/mercedes_PNG80135.png" alt="White luxury sedan prepared for door-to-door relocation by MoveMyCar UAE" loading="eager">
+          <img width="700" height="310" fetchpriority="high" src="assets/images/photo-1.png" alt="White luxury sedan prepared for door-to-door relocation by MoveMyCar UAE" loading="eager">
           <div class="hero-visual-badge">
             <span class="badge-emoji">🛡️</span>
             <div>
-              <strong>AED 1.5M Insured</strong>
-              <span>Every trip, door to door</span>
+              <strong>Handover preview</strong>
+              <span>Collection to delivery</span>
             </div>
           </div>
         </div>
@@ -154,22 +160,22 @@
         <div class="pill-card">
           <div class="pill-icon">⚡</div>
           <div>
-            <div class="pill-title">45 Min Dispatch</div>
-            <div class="pill-sub">Vetted driver matched near you</div>
+            <div class="pill-title">Easy booking</div>
+            <div class="pill-sub">Plan your next vehicle move</div>
           </div>
         </div>
         <div class="pill-card">
           <div class="pill-icon">🛡️</div>
           <div>
-            <div class="pill-title">AED 1.5M Insurance</div>
-            <div class="pill-sub">Comprehensive transit coverage</div>
+            <div class="pill-title">Condition reports</div>
+            <div class="pill-sub">Review collection and delivery</div>
           </div>
         </div>
         <div class="pill-card">
           <div class="pill-icon">📍</div>
           <div>
-            <div class="pill-title">Live GPS Telemetry</div>
-            <div class="pill-sub">Real-time speed &amp; ETA tracking</div>
+            <div class="pill-title">Trip tracking</div>
+            <div class="pill-sub">Explore a simulated journey</div>
           </div>
         </div>
         <div class="pill-card">
@@ -190,7 +196,7 @@
         <div class="fleet-header">
           <div>
             <div class="section-tag">Supported Luxury Fleet</div>
-            <h2 class="section-title">Experienced with High End Vehicles</h2>
+            <h2 class="section-title">Care for every kind of car</h2>
             <!-- <p class="section-subtitle">Our drivers are trained to handle executive and exotic marques with the care they require.</p> -->
           </div>
           <div class="fleet-filter-pills">
@@ -229,10 +235,10 @@
       <div class="container tracking-layout" id="liveTrackingSection">
         <!-- Telemetry Card -->
         <div class="tracking-telemetry-card">
-          <div class="section-tag">Real-Time Telemetry</div>
+          <div class="section-tag">Your vehicle, in view</div>
           <h2 style="font-size:24px;margin-bottom:6px;">Live GPS Tracking</h2>
           <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">
-            Automated SMS and WhatsApp tracking sent to dealerships and car owners.
+            Follow your vehicle’s route and review collection and delivery progress. Position estimates are shown for this preview.
           </p>
 
           <div class="tracking-search-bar">
@@ -248,7 +254,7 @@
               </div>
               <div class="timeline-content">
                 <h5>Booking Confirmed</h5>
-                <p>Corporate billing authorized</p>
+                <p>Booking received</p>
               </div>
             </li>
             <li class="timeline-step completed">
@@ -268,7 +274,7 @@
               </div>
               <div class="timeline-content">
                 <h5>8-Point Photo Handover Signed</h5>
-                <p>Condition certified by collection agent</p>
+                <p>Collection checklist</p>
               </div>
             </li>
             <li class="timeline-step active">
@@ -298,7 +304,7 @@
           <div id="leafletLiveMap"></div>
           <div class="map-driver-bar">
             <div class="driver-info-meta">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Driver" class="driver-avatar">
+              <img src="assets/images/photo-2.jpg" alt="Driver" class="driver-avatar">
               <div>
                 <h4 style="font-size:15px;color:var(--text-heading);" id="liveCarName">Rolls-Royce Ghost Extended</h4>
                 <p style="font-size:12px;color:var(--text-muted);" id="liveRouteDisplay">Al Quoz Auto Hub → Yas Marina</p>
@@ -306,7 +312,7 @@
             </div>
             <div style="text-align:right;">
               <span class="speed-val" id="liveSpeedDisplay">84 km/h</span>
-              <span style="display:block;font-size:11px;color:var(--text-muted);text-transform:uppercase;">Live Telemetry</span>
+              <span style="display:block;font-size:11px;color:var(--text-muted);text-transform:uppercase;">Simulated progress</span>
             </div>
           </div>
         </div>
@@ -322,7 +328,7 @@
           <p class="section-subtitle" style="margin-bottom:20px;">
             <!-- Timestamped photos, odometer readings, and
             signatures from both sides are captured at collection and delivery condition. -->
-            check condition on both side then handover to client
+            Review vehicle condition at collection and delivery, with space for photos, mileage, and signatures. View the condition report below.
           </p>
 
           <div style="display:flex;gap:12px;margin-top:20px;">
@@ -330,21 +336,21 @@
               Preview Handover Certificate
             </button>
             <button class="btn btn-outline" onclick="window.HandoverReportEngine.openInvoiceModal('MMC-7821')">
-              View UAE VAT Invoice
+              View Invoice
             </button>
           </div>
         </div>
 
         <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-card);">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <strong style="font-size:14px;">Live Inspection Sample (MMC-7821)</strong>
-            <span class="badge badge-success">Passed ✓</span>
+            <strong style="font-size:14px;">Vehicle Inspection · MMC-7821</strong>
+            <span class="badge badge-success">Reference photos</span>
           </div>
           <div class="inspection-photo-grid">
-            <div class="inspection-photo-item"><img src="https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=300&q=80" alt="Front"><span class="inspection-photo-label">Front</span></div>
-            <div class="inspection-photo-item"><img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=300&q=80" alt="Rear"><span class="inspection-photo-label">Rear</span></div>
-            <div class="inspection-photo-item"><img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=300&q=80" alt="Left"><span class="inspection-photo-label">Coach Doors</span></div>
-            <div class="inspection-photo-item"><img src="https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=300&q=80" alt="Cockpit"><span class="inspection-photo-label">Starlight Dash</span></div>
+            <div class="inspection-photo-item"><img src="assets/images/photo-3.jpg" alt="Front"><span class="inspection-photo-label">Example 1</span></div>
+            <div class="inspection-photo-item"><img src="assets/images/photo-4.jpg" alt="Rear"><span class="inspection-photo-label">Example 2</span></div>
+            <div class="inspection-photo-item"><img src="assets/images/photo-5.jpg" alt="Left"><span class="inspection-photo-label">Example 3</span></div>
+            <div class="inspection-photo-item"><img src="assets/images/photo-6.jpg" alt="Cockpit"><span class="inspection-photo-label">Example 4</span></div>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-top:10px;">
             <span>GPS: 25.1400° N, 55.2300° E</span>
@@ -367,11 +373,11 @@
           <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px;max-width:480px;margin-bottom:20px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
               <span id="driverJobsCountDisplay" style="font-weight:700;">10 trips / week</span>
-              <span style="font-size:12px;color:var(--text-muted);">Est. Weekly Earnings</span>
+              <span style="font-size:12px;color:var(--text-muted);">Estimated weekly earnings</span>
             </div>
-            <input type="range" id="driverWeeklyJobsRange" min="2" max="30" value="10" style="width:100%;accent-color:var(--color-primary);margin-bottom:8px;">
+            <input type="range" id="driverWeeklyJobsRange" aria-label="Estimated trips per week" min="2" max="30" value="10" style="width:100%;accent-color:var(--color-primary);margin-bottom:8px;">
             <div style="display:flex;justify-content:space-between;align-items:baseline;">
-              <span style="font-size:12px;color:var(--text-muted);">AED 280 avg per job</span>
+              <span style="font-size:12px;color:var(--text-muted);">Estimated AED 280 per job</span>
               <span id="driverEarningsDisplay" style="font-size:24px;font-weight:800;color:var(--color-primary);">AED 2,800</span>
             </div>
           </div>
@@ -404,19 +410,19 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px;margin:0 auto;">
           <div style="background:#fff;padding:18px;border-radius:var(--radius-md);border:1px solid var(--border-subtle);">
             <h5 style="margin-bottom:4px;">Is my vehicle insured?</h5>
-            <p style="font-size:13px;color:var(--text-muted);">Yes, AED 1.5M comprehensive transit insurance is active on every trip.</p>
+            <p style="font-size:13px;color:var(--text-muted);">Insurance arrangements depend on the vehicle and journey. Confirm coverage with the operations team before collection.</p>
           </div>
           <div style="background:#fff;padding:18px;border-radius:var(--radius-md);border:1px solid var(--border-subtle);">
             <h5 style="margin-bottom:4px;">How are dealerships billed?</h5>
-            <p style="font-size:13px;color:var(--text-muted);">Monthly consolidated FTA-compliant 5% VAT invoices per branch.</p>
+            <p style="font-size:13px;color:var(--text-muted);">View invoices, review charges, and export movement statements from your dealership account.</p>
           </div>
           <div style="background:#fff;padding:18px;border-radius:var(--radius-md);border:1px solid var(--border-subtle);">
             <h5 style="margin-bottom:4px;">Who are the drivers?</h5>
-            <p style="font-size:13px;color:var(--text-muted);">Licensed UAE professionals with background checks and luxury vehicle vetting.</p>
+            <p style="font-size:13px;color:var(--text-muted);">The driver directory shows assigned drivers, their availability, ratings, and vehicle experience.</p>
           </div>
           <div style="background:#fff;padding:18px;border-radius:var(--radius-md);border:1px solid var(--border-subtle);">
             <h5 style="margin-bottom:4px;">How does tracking work?</h5>
-            <p style="font-size:13px;color:var(--text-muted);">Live SMS/WhatsApp link showing real-time GPS coordinates and ETA.</p>
+            <p style="font-size:13px;color:var(--text-muted);">Enter your movement reference to view the route, assigned driver, and latest recorded status.</p>
           </div>
         </div>
       </div>
@@ -437,7 +443,7 @@
           <span style="font-size:12px;color:var(--text-muted);">Account: MMC-DLR-48192 · Dubai Auto Hub Branch</span>
         </div>
         <div style="display:flex;gap:10px;">
-          <button class="btn btn-outline btn-sm" onclick="window.HandoverReportEngine.openInvoiceModal('MMC-7821')">Monthly VAT Statement</button>
+          <button class="btn btn-outline btn-sm" onclick="window.PanelApp.exportJobs('dealer')">Export Movement Statement</button>
           <button class="btn btn-primary btn-sm" onclick="document.getElementById('dealerVinInput').focus()">+ New Fleet Movement</button>
         </div>
       </div>
@@ -448,22 +454,22 @@
         <div class="stat-card">
           <span class="stat-label">Active Moves</span>
           <div class="stat-val" id="dealerActiveMoves">2</div>
-          <span class="stat-trend up">● 2 Units in Transit</span>
+          <span class="stat-trend up">Current movements</span>
         </div>
         <div class="stat-card">
           <span class="stat-label">Total Fleet Relocated</span>
           <div class="stat-val" id="dealerTotalFleet">22</div>
-          <span class="stat-trend up">↑ 18% vs Last Month</span>
+          <span class="stat-trend up">Total movements</span>
         </div>
         <div class="stat-card">
           <span class="stat-label">Invoiced Spend</span>
           <div class="stat-val" id="dealerMonthlySpend">AED 15,440</div>
-          <span class="stat-trend" style="color:var(--text-muted);">5% VAT Inclusive</span>
+          <span class="stat-trend" style="color:var(--text-muted);">Including VAT</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">SLA Compliance</span>
-          <div class="stat-val" style="color:var(--status-success);">99.8%</div>
-          <span class="stat-trend up">Avg ETA: 42m</span>
+          <span class="stat-label">Delivered Moves</span>
+          <div class="stat-val" style="color:var(--status-success);">—</div>
+          <span class="stat-trend up">From your movement records</span>
         </div>
       </div>
 
@@ -493,7 +499,7 @@
 
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
           <span style="font-size:12px;color:var(--text-muted);" id="dealerVinCount">0 vehicles queued</span>
-          <span style="font-size:11px;color:var(--color-primary);font-weight:700;">Bulk 10% volume discount applied on 3+ units</span>
+          <span style="font-size:11px;color:var(--color-primary);font-weight:700;">Fleet pricing: 10% dealer discount + 8% for 3+ vehicles</span>
         </div>
 
         <div class="vin-tag-cloud" id="dealerVinTagCloud"></div>
@@ -579,22 +585,7 @@
   <!-- ========================================================
        VIEW 4: DRIVER MOBILE APP SIMULATOR
   ======================================================== -->
-  <main id="view-driver" class="app-view">
-    <div class="container" style="text-align:center;padding-top:20px;padding-bottom:10px;">
-      <div class="section-tag">Mobile Experience</div>
-      <h2 style="font-size:24px;">Vetted Driver Mobile App</h2>
-      <p style="font-size:13px;color:var(--text-muted);max-width:500px;margin:4px auto 0;">
-        See how our drivers receive trip alerts, complete the 8-point condition check, capture the customer signature, and navigate to delivery.
-      </p>
-    </div>
-
-    <div class="phone-sim-wrapper">
-      <div class="phone-mockup">
-        <div class="phone-dynamic-island"></div>
-        <div class="phone-screen" id="driverAppScreen"></div>
-      </div>
-    </div>
-  </main>
+  <main id="view-driver" class="app-view"></main>
 
   <!-- ========================================================
        MODALS
@@ -604,17 +595,17 @@
     <div class="modal-dialog">
       <div class="modal-header">
         <h3 class="modal-title" id="wizardStepTitle">Step 1 of 3: Movement Details</h3>
-        <span class="modal-close-btn">&times;</span>
+        <button type="button" class="modal-close-btn" aria-label="Close dialog">&times;</button>
       </div>
       <div class="modal-body">
         <div class="wizard-step" id="wizardStep1">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
             <div class="bar-field">
-              <label class="bar-label">Collect From</label>
+              <label class="bar-label" for="modalFrom">Collect From</label>
               <select class="bar-control" id="modalFrom"></select>
             </div>
             <div class="bar-field">
-              <label class="bar-label">Deliver To</label>
+              <label class="bar-label" for="modalTo">Deliver To</label>
               <select class="bar-control" id="modalTo"></select>
             </div>
           </div>
@@ -632,7 +623,7 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
             <div class="bar-field" style="grid-column:1/-1;">
               <label class="bar-label">Vehicle Make &amp; Model</label>
-              <input type="text" class="bar-control" id="wizCarModel" value="Rolls-Royce Ghost Extended">
+              <input type="text" class="bar-control" id="wizCarModel" value="Toyota Camry">
             </div>
             <div class="bar-field">
               <label class="bar-label">Plate / Chassis Number</label>
@@ -640,7 +631,7 @@
             </div>
             <div class="bar-field">
               <label class="bar-label">Client Mobile (WhatsApp)</label>
-              <input type="tel" class="bar-control" placeholder="+971 50 XXX XXXX" value="+971 50 892 4192">
+              <input type="tel" class="bar-control" placeholder="+971 50 XXX XXXX" value="+971 50 000 1000">
             </div>
           </div>
         </div>
@@ -649,12 +640,12 @@
           <div style="width:60px;height:60px;background:var(--status-success-soft);border:2px solid var(--status-success);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--status-success);font-size:26px;margin:0 auto 14px;">
             ✓
           </div>
-          <h4 style="font-size:20px;">Booking Confirmed!</h4>
-          <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">Your driver has been allocated.</p>
+          <h4 style="font-size:20px;">Booking request saved</h4>
+          <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">Your movement is ready for driver assignment.</p>
           <div style="font-family:var(--font-heading);font-size:26px;font-weight:800;color:var(--color-primary);margin:12px 0;" id="wizGeneratedRef">
             MMC-8912
           </div>
-          <p style="font-size:12px;color:var(--text-muted);">SMS &amp; WhatsApp live tracking link sent.</p>
+          <p style="font-size:12px;color:var(--text-muted);">Keep your reference to follow this movement.</p>
         </div>
       </div>
       <div class="modal-footer">
@@ -668,8 +659,8 @@
   <div class="modal-overlay" id="taxInvoiceModal">
     <div class="modal-dialog" style="max-width:760px;">
       <div class="modal-header">
-        <h3 class="modal-title">Electronic VAT Tax Invoice</h3>
-        <span class="modal-close-btn">&times;</span>
+        <h3 class="modal-title">Invoice preview</h3>
+        <button type="button" class="modal-close-btn" aria-label="Close dialog">&times;</button>
       </div>
       <div class="modal-body" id="invoiceModalContent"></div>
       <div class="modal-footer">
@@ -684,12 +675,12 @@
     <div class="modal-dialog" style="max-width:820px;">
       <div class="modal-header">
         <h3 class="modal-title">Digital Vehicle Handover Certificate</h3>
-        <span class="modal-close-btn">&times;</span>
+        <button type="button" class="modal-close-btn" aria-label="Close dialog">&times;</button>
       </div>
       <div class="modal-body" id="handoverModalContent"></div>
       <div class="modal-footer">
         <button class="btn btn-outline" data-close-modal>Close</button>
-        <button class="btn btn-primary" onclick="window.print()">🖨️ Download Official PDF</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
       </div>
     </div>
   </div>
@@ -699,7 +690,7 @@
     <div class="modal-dialog">
       <div class="modal-header">
         <h3 class="modal-title">Apply to Drive with MoveMyCar UAE</h3>
-        <span class="modal-close-btn">&times;</span>
+        <button type="button" class="modal-close-btn" aria-label="Close dialog">&times;</button>
       </div>
       <form id="driverRegisterForm">
         <div class="modal-body">
@@ -723,7 +714,7 @@
             </div>
           </div>
           <p style="font-size:12px;color:var(--text-muted);margin-top:12px;">
-            By applying you agree to transit insurance screening and Emirates ID background check.
+            Your details are saved on this device. Online application submission is not connected yet.
           </p>
         </div>
         <div class="modal-footer">
@@ -734,20 +725,16 @@
     </div>
   </div>
 
+  <main id="view-customer" class="app-view"></main>
+
   <!-- Global Toast -->
-  <div class="app-toast" id="appToast">Notification message</div>
+  <div class="app-toast" id="appToast" role="status" aria-live="polite">Notification message</div>
 
   <!-- Site Footer -->
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-col">
-        <div class="logo-brand" style="margin-bottom:12px;">
-          <svg class="car-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" style="width:32px;height:32px;">
-            <path d="M6 38l7-16c1-2.5 3.5-4 6-4h26c2.5 0 5 1.5 6 4l7 16" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M4 38h56v8a4 4 0 01-4 4H8a4 4 0 01-4-4v-8z" fill="currentColor"/>
-          </svg>
-          <span>MoveMyCar<span class="domain">.ae</span></span>
-        </div>
+        <div class="logo-brand" style="margin-bottom:12px;"><img class="brand-logo" src="assets/movemycar-logo.png" alt="MoveMyCar Vehicle Logistics UAE"></div>
         <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">
           Professional vehicle relocation connecting car dealerships, traders, and private owners across the UAE.
         </p>
@@ -767,7 +754,8 @@
         <h5>Portals</h5>
         <ul class="footer-links">
           <li><a href="#" onclick="window.switchView('dealer')">Dealership Portal</a></li>
-          <li><a href="#" onclick="window.switchView('dispatch')">Dispatch Hub</a></li>
+          <li><a href="admin-panel/" data-panel-link="admin">Admin Panel</a></li>
+          <li><a href="customer-panel/" data-panel-link="customer">Customer Panel</a></li>
           <li><a href="#" onclick="window.switchView('driver')">Driver Mobile App</a></li>
           <li><a href="#" onclick="window.HandoverReportEngine.openHandoverModal('MMC-7821')">Handover Certificate</a></li>
         </ul>
@@ -776,32 +764,42 @@
       <div class="footer-col">
         <h5>Compliance</h5>
         <ul class="footer-links">
-          <li><span style="font-weight:700;">TRN: 100482910400003</span></li>
-          <li><span>FTA 5% VAT Tax Invoices</span></li>
-          <li><span>AED 1.5M Transit Insurance</span></li>
-          <li><span>Emirates ID Vetted Drivers</span></li>
+          <li><span style="font-weight:700;">Dealership accounts</span></li>
+          <li><span>Itemised invoice breakdown</span></li>
+          <li><span>Digital handover documents</span></li>
+          <li><span>Example driver profiles</span></li>
         </ul>
       </div>
     </div>
 
     <div class="container footer-bottom">
-      <span>© 2026 MoveMyCar UAE Logistics LLC. All rights reserved.</span>
-      <span>Terms of Carriage · FTA VAT Compliance</span>
+      <span>© 2026 MoveMyCar.ae. All rights reserved.</span>
+      <span>Vehicle logistics across the UAE</span>
     </div>
   </footer>
 
   <!-- Leaflet Map JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="assets/leaflet/leaflet.js"></script>
 
   <!-- Modular Application Scripts -->
-  <script src="js/mock-data.js"></script>
-  <script src="js/calculator.js"></script>
+  <script src="js/demo-store.js?v=86dd5e2d83f3"></script>
+  <script src="js/mock-data.js?v=79a1f9e819dc"></script>
+  <script src="js/calculator.js?v=f6f53cc4279f"></script>
+  <script src="js/operations.js?v=d60aed5c75f9"></script>
+  <script src="js/payments.js?v=790bb65dd2fa"></script>
+  <script src="js/role-views.js?v=11ede27cdbc4"></script>
+  <script src="js/table-pager.js?v=0a484954fdab"></script>
 
-  <script src="js/map-tracker.js"></script>
-  <script src="js/handover-report.js"></script>
-  <script src="js/dealer-portal.js"></script>
-  <script src="js/dispatch-dashboard.js"></script>
-  <script src="js/driver-app.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/maps-config.js?v=ad1b50be0091"></script>
+  <script src="js/google-maps.js?v=e404d680ca6d"></script>
+  <script src="js/map-tracker.js?v=0171e53cc2c8"></script>
+  <script src="js/handover-report.js?v=7eb74ef35aa0"></script>
+  <script src="js/dealer-portal.js?v=a988999de53d"></script>
+  <script src="js/dispatch-dashboard.js?v=09eae1fb2669"></script>
+  <script src="js/main.js?v=e7f68c7253ac"></script>
+  <script src="js/panels.js?v=bf33db65ecd8"></script>
+  <script src="js/booking-ui.js?v=5ea641d89f88"></script>
+  <script src="js/combobox.js?v=ae2dffce7c29"></script>
+  <script src="js/calendar.js?v=e88f086ca9db"></script>
 </body>
 </html>

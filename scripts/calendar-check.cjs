@@ -1,0 +1,23 @@
+const {chromium}=require('@playwright/test'),assert=require('assert');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.MMC_BROWSER_PATH}),page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.route(/^https?:\/\/(?!127\.0\.0\.1)/,r=>r.abort());
+ await page.goto('http://127.0.0.1:4173/');await page.waitForFunction(()=>!!window.DatePickers&&!!window.BookingUI);
+ const today=await page.locator('#barDate').inputValue();
+ for(const width of [320,375,768,1440]){
+  await page.setViewportSize({width,height:720});await page.locator('label[for=barDate]').click();await page.locator('.calendar-popup').waitFor();
+  const rect=await page.locator('.calendar-popup').boundingBox();assert(rect.x>=0&&rect.y>=0&&rect.x+rect.width<=width+1&&rect.y+rect.height<=721,'Calendar stays in viewport at '+width);
+  assert(rect.width<=280&&rect.height<430,'Calendar uses the compact layout');
+  assert(await page.locator('.calendar-day[aria-selected=true]').getAttribute('data-date')===await page.locator('#barDate').inputValue());
+  const enabled=await page.locator('.calendar-day:not(:disabled)').evaluateAll(nodes=>nodes.every(n=>n.dataset.date>=document.getElementById('barDate').min));assert(enabled,'Past dates are disabled');
+  await page.locator('[data-tomorrow]').click();assert(await page.locator('#barDate').inputValue()!==today);await page.locator('#barDate-trigger').click();await page.locator('[data-today]').click();assert(await page.locator('#barDate').inputValue()===today);
+ }
+ await page.locator('#barDate-trigger').click();await page.keyboard.press('ArrowRight');await page.keyboard.press('Enter');assert(await page.locator('#barDate').inputValue()!==today,'Keyboard changes date');
+ await page.locator('#barDate-trigger').click();await page.keyboard.press('PageDown');await page.keyboard.press('Enter');assert(await page.locator('#barDate').inputValue()>today,'Month navigation selects date');
+ await page.evaluate(value=>document.getElementById('barDate').value=value,today);assert((await page.locator('#barDate-trigger').textContent()).includes('2026'));
+ await page.evaluate(()=>window.openBookingWizard());await page.locator('#modalDate-trigger').click();await page.keyboard.press('Escape');assert(await page.locator('#bookingWizardModal.active').count()===1,'Escape closes calendar before booking dialog');
+ await page.setViewportSize({width:375,height:700});await page.locator('#modalDate-trigger').click();const modalRect=await page.locator('.calendar-popup').boundingBox();assert(modalRect.x>=0&&modalRect.y>=0&&modalRect.x+modalRect.width<=376&&modalRect.y+modalRect.height<=701);await page.screenshot({path:'artifacts/calendar-mobile.png'});await page.locator('[data-tomorrow]').click();
+ const selected=await page.locator('#modalDate').inputValue();await page.locator('#wizardStep1 input[type=text]').nth(0).fill('Collection address');await page.locator('#wizardStep1 input[type=text]').nth(1).fill('Delivery address');await page.locator('#wizardNextBtn').click();await page.locator('#wizardStep2 input[placeholder*="Dubai"]').fill('Dubai A 123');await page.locator('#wizardNextBtn').click();await page.locator('#wizardStep3').waitFor({state:'visible'});const ref=(await page.locator('#wizGeneratedRef').textContent()).trim();assert(await page.evaluate(({ref,selected})=>window.INITIAL_JOBS.find(j=>j.ref===ref).date===selected,{ref,selected}),'Selected date is saved in booking');await page.keyboard.press('Escape');
+ await page.evaluate(()=>{const form=document.createElement('form');form.id='dateTest';form.innerHTML='<label for="dateRequired">Required date</label><input id="dateRequired" name="pickup" type="date" min="2026-11-12" max="2026-11-20" required>';document.body.append(form);});await page.locator('#dateRequired-trigger').waitFor();assert(await page.locator('#dateRequired').evaluate(input=>input.reportValidity())===false);await page.locator('.calendar-popup').waitFor();await page.locator('[data-date="2026-11-15"]').click();assert(await page.locator('#dateTest').evaluate(form=>new FormData(form).get('pickup')==='2026-11-15'&&form.checkValidity()));
+ await page.setViewportSize({width:1440,height:1000});await page.locator('#barDate-trigger').click();await page.screenshot({path:'artifacts/calendar-desktop.png'});await page.keyboard.press('Escape');
+ assert.deepStrictEqual(errors,[]);console.log('PASS: calendar layout at 320/375/768/1440px, date highlights, min/max, Today/Tomorrow, keyboard and month navigation, modal Escape, saved booking date, required validation, native form values; no JavaScript errors.');await browser.close();
+})().catch(e=>{console.error(e);process.exit(1);});
